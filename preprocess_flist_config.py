@@ -28,6 +28,7 @@ def get_wav_duration(file_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--train_list", type=str, default="./filelists/train.txt", help="path to train list")
+    parser.add_argument("--num_val_samples", type=int, default=2, help="Number of samples to include in the validation set")
     parser.add_argument("--val_list", type=str, default="./filelists/val.txt", help="path to val list")
     parser.add_argument("--source_dir", type=str, default="./dataset/44k", help="path to source dir")
     parser.add_argument("--speech_encoder", type=str, default="vec768l12", help="choice a speech encoder|'vec768l12','vec256l9','hubertsoft','whisper-ppg','cnhubertlarge','dphubert','whisper-ppg-large','wavlmbase+'")
@@ -65,8 +66,11 @@ if __name__ == "__main__":
             wavs.append(file_path)
 
         shuffle(wavs)
-        train += wavs[2:]
-        val += wavs[:2]
+        # train += wavs[2:]
+        # val += wavs[:2]
+        val_size = min(len(wavs), args.num_val_samples)
+        train += wavs[val_size:]
+        val += wavs[:val_size]
 
     shuffle(train)
     shuffle(val)
